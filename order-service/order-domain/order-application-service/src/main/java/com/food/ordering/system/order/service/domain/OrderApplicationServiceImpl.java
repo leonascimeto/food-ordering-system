@@ -15,12 +15,12 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @Service
 class OrderApplicationServiceImpl implements OrderApplicationService {
-    private final OrderCreateCommandHandler orderCreateCommanHandler;
+    private final OrderCreateCommandHandler orderCreateCommandHandler;
     private final OrderTrackCommandHandler orderTrackCommandHandler;
 
     @Override
     public CreateOrderResponse createOrder(CreateOrderCommand createOrderCommand) {
-        return orderCreateCommanHandler.createOrder(createOrderCommand);
+        return orderCreateCommandHandler.createOrder(createOrderCommand);
     }
 
     @Override

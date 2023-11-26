@@ -16,7 +16,6 @@ import com.food.ordering.system.order.service.domain.valueObject.StreetAddress;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -42,10 +41,11 @@ public class OrderDataMapper {
                 .build();
     }
 
-    public CreateOrderResponse orderToCreatedOrderResponse(Order order){
+    public CreateOrderResponse orderToCreatedOrderResponse(Order order, String message){
         return CreateOrderResponse.builder()
                 .orderTrackingId(order.getTrackingId().getValue())
                 .orderStatus(order.getOrderStatus())
+                .message(message)
                 .build();
     }
 

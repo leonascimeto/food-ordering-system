@@ -6,14 +6,14 @@ import com.food.ordering.system.order.service.domain.exception.OrderDomainExcept
 import com.food.ordering.system.order.service.domain.valueObject.OrderItemId;
 import com.food.ordering.system.order.service.domain.valueObject.StreetAddress;
 import com.food.ordering.system.order.service.domain.valueObject.TrackingId;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
 
 @Builder
 @Getter
+@EqualsAndHashCode(callSuper = true)
 public class Order extends AggregateRoot<OrderId> {
     private final CustomerId customerId;
     private final RestaurantId restaurantId;
@@ -85,15 +85,15 @@ public class Order extends AggregateRoot<OrderId> {
             return orderItem.getSubtotal();
         }).reduce(Money.ZERO, Money::add);
 
-        if(price.equals(orderItemsTotal)) {
+        if(!price.equals(orderItemsTotal)) {
             throw new OrderDomainException("Total price " + price.getAmount() + " does not match items total " + orderItemsTotal.getAmount() + "!");
         }
     }
 
     private void validateItemPrice(OrderItem orderItem) {
         if(!orderItem.isPriceValid()) {
-            throw new OrderDomainException("Order item price: " + orderItem.getPrice().getAmount() +
-                    " does not match product price: " + orderItem.getProduct().getPrice().getAmount() + "!");
+            throw new OrderDomainException("Order item price: " + orderItem.getPrice().getAmount() + " is not valid for product "
+                    + orderItem.getProduct().getId().getValue());
         }
 
     }

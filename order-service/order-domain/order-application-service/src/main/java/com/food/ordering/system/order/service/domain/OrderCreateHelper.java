@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -39,15 +40,17 @@ public class OrderCreateHelper {
 
     private Restaurant checkRestaurant(CreateOrderCommand createOrderCommand) {
         Restaurant restaurant = orderDataMapper.createOrderComandToRestaurant(createOrderCommand);
-        restaurantRepository.findRestaurantInformation(restaurant).orElseThrow(() -> {
-            log.error("Restaurant with id {} not found", restaurant.getId());
-            return new OrderDomainException("Restaurant with id "+ restaurant.getId() +" not found");
-        });
-        return restaurant;
+        Optional<Restaurant> optionalRestaurant = restaurantRepository.findRestaurantInformation(restaurant);
+        if (optionalRestaurant.isEmpty()) {
+            log.warn("Could not find restaurant with restaurant id: {}", createOrderCommand.getRestaurantId());
+            throw new OrderDomainException("Could not find restaurant with restaurant id: " +
+                    createOrderCommand.getRestaurantId());
+        }
+        return optionalRestaurant.get();
     }
 
     private void checkCustomer(UUID customerId) {
-        customerRepository.finsCustomer(customerId).orElseThrow(() -> {
+        customerRepository.findCustomer(customerId).orElseThrow(() -> {
             log.error("Customer with id {} not found", customerId);
             return new OrderDomainException("Customer with id "+ customerId +" not found");
         });
